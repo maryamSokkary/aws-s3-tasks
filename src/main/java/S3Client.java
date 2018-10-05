@@ -1,6 +1,7 @@
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 
 import java.io.InputStream;
 import java.util.UUID;
@@ -24,7 +25,7 @@ public class S3Client {
 
     public void uploadFile (String fileName, InputStream inputStream){
         String key = fileName;
-        s3.putObject(bucketName, key, inputStream, new ObjectMetadata());
+        s3.putObject(new PutObjectRequest(bucketName, key, inputStream, new ObjectMetadata()));
     }
 
 }

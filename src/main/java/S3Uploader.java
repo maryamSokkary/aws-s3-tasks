@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.nio.file.Paths;
+import java.sql.SQLException;
+import java.text.ParseException;
 
 @WebServlet("/S3Uploader")
 @MultipartConfig
@@ -19,7 +21,12 @@ public class S3Uploader extends HttpServlet {
         InputStream fileContent = filePart.getInputStream();
 
         S3Client s3Client = S3Client.S3Client();
-        s3Client.uploadFile(fileName, fileContent);
+
+        try {
+            s3Client.uploadFile(fileName, fileContent);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
     }
 

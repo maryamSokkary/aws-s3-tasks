@@ -4,6 +4,15 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 
 import java.io.InputStream;
+import java.security.Timestamp;
+import java.security.cert.CertPath;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Date;
 import java.util.UUID;
 
 public class S3Client {
@@ -23,9 +32,12 @@ public class S3Client {
         return s3Client;
     }
 
-    public void uploadFile (String fileName, InputStream inputStream){
+    public void uploadFile (String fileName, InputStream inputStream) throws SQLException {
         String key = fileName;
         s3.putObject(new PutObjectRequest(bucketName, key, inputStream, new ObjectMetadata()));
+        DataBase dataBase = DataBase.dataBase();
+        dataBase.insertFile(fileName, LocalDate.now(), LocalTime.now());
+
     }
 
 }

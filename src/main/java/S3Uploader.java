@@ -11,6 +11,7 @@ import java.io.PrintWriter;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.Objects;
 
 @WebServlet("/S3Uploader")
 @MultipartConfig
@@ -20,13 +21,37 @@ public class S3Uploader extends HttpServlet {
         String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString(); // MSIE fix.
         InputStream fileContent = filePart.getInputStream();
 
-        S3Client s3Client = S3Client.S3Client();
+        if (Objects.equals(fileName, "")){
+            response.setContentType("text/html");
+            PrintWriter out = response.getWriter();
+            out.println("<h3>Dude! upload a file!</h3>");
+            return;
+
+        }
+
+        S3Client s3Client = null;
+        try {
+            s3Client = S3Client.S3Client();
+        } catch (Exception e) {
+            response.setContentType("text/html");
+            PrintWriter out = response.getWriter();
+            out.println("<h3>Couldn't upload (problem with s3client), sorry!</h3>");
+            return;
+        }
 
         try {
             s3Client.uploadFile(fileName, fileContent);
-        } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("here");
+        } catch (Exception e) {
+            response.setContentType("text/html");
+            PrintWriter out = response.getWriter();
+            out.println("<h3>Couldn't upload sorry!</h3>");
+            return;
         }
+
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+        out.println("<h3>Uploaded successfully!</h3>");
 
     }
 
